@@ -22,3 +22,5 @@ resources:
         - calendar.contacts
 ```
 
+### You want more than 5 events?
+Using docker-compose and sed change the `'maxResults': 5` in `/homeassistant/components/calendar/google.py` to a number of your liking.
