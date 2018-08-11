@@ -1,5 +1,5 @@
 # Calendar Card for Home Assistant
-(https://i.imgur.com/egQofZM.png "Layout")
+!(https://i.imgur.com/egQofZM.png "Layout")
 
 ## Usage
 ### Prerequisites
