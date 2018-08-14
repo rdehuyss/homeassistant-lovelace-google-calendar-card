@@ -17,7 +17,7 @@ class GoogleCalendarCard extends HTMLElement {
 
     this
       .getAllEvents(this.config.entities)
-      .then(data => this.updateHtmlIfNecessary(data))
+      .then(events => this.updateHtmlIfNecessary(events))
       .catch(error => console.log('error', error));
   }
 
@@ -28,17 +28,25 @@ class GoogleCalendarCard extends HTMLElement {
 
       let urls = entities.map(entity => `calendars/${entity}?start=${start}Z&end=${end}Z`);
       let allResults = await this.getAllUrls(urls)
-      let result = [].concat.apply([], allResults);
-      result.forEach(item => {
+      let events = [].concat.apply([], allResults);
+      events.forEach(item => {
         if (item.start.date) {
           let dateTime = new Date(Date.parse(item.start.date));
           item.start.dateTime = dateTime.toISOString();
         }
       });
-      result.sort((a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime));
-      this.events = result;
+
+      if(this.config.showProgressBar) {
+        let now = {start: {dateTime: moment().format()}, type: 'now'}
+        events.push(now);
+      }
+
+      events.sort((a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime));
+      
+      let isSomethingChanged = this.isSomethingChanged(events);
+      this.events = events;
       this.lastUpdate = moment();
-      return result;
+      return { events: events, isSomethingChanged: isSomethingChanged };
     } else {
       return this.events;
     }
@@ -56,9 +64,8 @@ class GoogleCalendarCard extends HTMLElement {
     }
   }
 
-  updateHtmlIfNecessary(events) {
-    if(this.isSomethingChanged(events)) {
-      this.eventsAsString = JSON.parse(JSON.stringify(events));
+  updateHtmlIfNecessary(eventList) {
+    if(eventList.isSomethingChanged) {
       this.content.innerHTML = `
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
         <style>
@@ -129,12 +136,7 @@ class GoogleCalendarCard extends HTMLElement {
         </style>
       `;
 
-      if(this.config.showProgressBar) {
-        let now = {start: {dateTime: moment().format()}, type: 'now'}
-        events.push(now);
-        events.sort((a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime));
-      }
-
+      let events = eventList.events;
       let groupedEventsPerDay = this.groupBy(events, event => moment(new Date(event.start.dateTime)).format('YYYY-MM-DD'));
 
       groupedEventsPerDay.forEach((events, day) => {
@@ -194,8 +196,12 @@ class GoogleCalendarCard extends HTMLElement {
   }
 
   isSomethingChanged(events) {
-    let isSomethingChanged = JSON.stringify(events) !== JSON.stringify(this.eventsAsString);
+    let isSomethingChanged = JSON.stringify(events) !== JSON.stringify(this.events);
     return isSomethingChanged;
+  }
+
+  deepClone(obj) {
+    return JSON.parse(JSON.stringify(obj));
   }
 
   groupBy(list, keyGetter) {
