@@ -31,7 +31,7 @@ class GoogleCalendarCard extends HTMLElement {
       let events = [].concat.apply([], allResults);
       events.forEach(item => {
         if (item.start.date) {
-          let dateTime = new Date(Date.parse(item.start.date));
+          let dateTime = moment(item.start.date);
           item.start.dateTime = dateTime.toISOString();
         }
       });
@@ -50,7 +50,6 @@ class GoogleCalendarCard extends HTMLElement {
     } else {
       return this.events;
     }
-    
   }
 
   async getAllUrls(urls) {
@@ -137,7 +136,7 @@ class GoogleCalendarCard extends HTMLElement {
       `;
 
       let events = eventList.events;
-      let groupedEventsPerDay = this.groupBy(events, event => moment(new Date(event.start.dateTime)).format('YYYY-MM-DD'));
+      let groupedEventsPerDay = this.groupBy(events, event => moment(event.start.dateTime).format('YYYY-MM-DD'));
 
       groupedEventsPerDay.forEach((events, day) => {
         let eventStateCardContentElement = document.createElement('div');
