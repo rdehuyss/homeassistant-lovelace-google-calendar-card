@@ -1,4 +1,5 @@
 import moment from 'moment';
+import 'moment/min/locales';
 
 class GoogleCalendarCard extends HTMLElement {
   set hass(hass) {
@@ -9,6 +10,7 @@ class GoogleCalendarCard extends HTMLElement {
       this.content.style.padding = '0 16px 16px';
       card.appendChild(this.content);
       this.appendChild(card);
+      moment.locale(hass.language);
     }
 
     this._hass = hass;
