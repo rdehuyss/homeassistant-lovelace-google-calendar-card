@@ -1,11 +1,8 @@
 {
-  "name": "www",
+  "name": "google-calendar-card",
   "version": "1.0.0",
   "description": "",
-  "main": "content-card-example.js",
-  "directories": {
-    "lib": "lib"
-  },
+  "main": "google-calendar-card.js",
   "dependencies": {
     "moment": "^2.22.2",
     "moment-es6": "^1.0.0",
@@ -18,6 +15,6 @@
     "build": "webpack --config webpack.config.js",
     "watch": "webpack --watch --config webpack.config.js"
   },
-  "author": "",
+  "author": "Ronald Dehuysser",
   "license": "ISC"
 }
