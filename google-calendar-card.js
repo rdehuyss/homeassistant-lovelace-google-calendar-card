@@ -9,8 +9,9 @@ class GoogleCalendarCard extends HTMLElement {
       this.content.style.padding = '0 16px 16px';
       card.appendChild(this.content);
       this.appendChild(card);
-      console.log(hass);
     }
+
+    this._hass = hass;
 
     this
       .getAllEvents(this.config.entities)
@@ -19,11 +20,10 @@ class GoogleCalendarCard extends HTMLElement {
   }
 
   async getAllEvents(entities) {
-    const start = moment().format("YYYY-MM-DDTHH:mm:ss");
-    const end = moment().add(7, 'days').format("YYYY-MM-DDTHH:mm:ss");
+    const start = moment().startOf('day').format("YYYY-MM-DDTHH:mm:ss");
+    const end = moment().startOf('day').add(7, 'days').format("YYYY-MM-DDTHH:mm:ss");
 
-    let urls = entities
-      .map(entity => `/api/calendars/${entity}?start=${start}Z&end=${end}Z`)
+    let urls = entities.map(entity => `calendars/${entity}?start=${start}Z&end=${end}Z`);
     let allResults = await this.getAllUrls(urls)
     let result = [].concat.apply([], allResults);
     result.forEach(item => {
@@ -40,10 +40,7 @@ class GoogleCalendarCard extends HTMLElement {
     try {
       var data = await Promise.all(
         urls.map(
-          url =>
-            fetch(url).then(
-              (response) => { return response.json() }
-            )));
+          url => this._hass.callApi('get', url)));
       return (data)
     } catch (error) {
       console.log(error)
