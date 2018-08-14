@@ -23,7 +23,7 @@ class GoogleCalendarCard extends HTMLElement {
     const end = moment().add(7, 'days').format("YYYY-MM-DDTHH:mm:ss");
 
     let urls = entities
-      .map(entity => `http://localhost:8123/api/calendars/${entity}?start=${start}Z&end=${end}Z`)
+      .map(entity => `/api/calendars/${entity}?start=${start}Z&end=${end}Z`)
     let allResults = await this.getAllUrls(urls)
     let result = [].concat.apply([], allResults);
     result.forEach(item => {
