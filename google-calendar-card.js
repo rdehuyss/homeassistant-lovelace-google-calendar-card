@@ -128,7 +128,7 @@ class GoogleCalendarCard extends HTMLElement {
 
           hr.now {
             border-style: solid;
-            border-color: #03a9f4;
+            border-color: var(--primary-color);
             border-width: 1px 0 0 0;
             margin-top: -9px;
           }
