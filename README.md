@@ -2,9 +2,9 @@
 ![](https://i.imgur.com/egQofZM.png "Layout")
 
 ## Updates
-2018-08-18: major rewrite, see updated installation instructions
-2018-08-14: Correct use of hass.callApi to support new Authentication System, multi-locale and theming support, added caching
-2018-08-11: First release
+* 2018-08-18: major rewrite, see updated installation instructions
+* 2018-08-14: Correct use of hass.callApi to support new Authentication System, multi-locale and theming support, added caching
+* 2018-08-11: First release
 
 ## Usage
 ### Prerequisites
