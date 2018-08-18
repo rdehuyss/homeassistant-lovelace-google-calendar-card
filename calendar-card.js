@@ -1,4 +1,4 @@
-class GoogleCalendarCard extends HTMLElement {
+class CalendarCard extends HTMLElement {
   set hass(hass) {
     if (!this.content) {
       const card = document.createElement('ha-card');
@@ -25,20 +25,18 @@ class GoogleCalendarCard extends HTMLElement {
 
       let urls = entities.map(entity => `calendars/${entity}?start=${start}Z&end=${end}Z`);
       let allResults = await this.getAllUrls(urls)
-      let events = [].concat.apply([], allResults);
-      events.forEach(item => {
-        if (item.start.date) {
-          let dateTime = moment(item.start.date);
-          item.start.dateTime = dateTime.toISOString();
-        }
-      });
+      let events = [].concat
+        .apply([], allResults)
+        .map(x => this.toEvent(x));
 
       if(this.config.showProgressBar) {
-        let now = {start: {dateTime: moment().format()}, type: 'now'}
-        events.push(now);
+        if(events.length > 0 && moment().format('DD') === moment(events[0].startDateTime).format('DD')) {
+          let now = {startDateTime: moment().format(), type: 'now'}
+          events.push(now);
+        }
       }
 
-      events.sort((a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime));
+      events.sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime));
       
       let isSomethingChanged = this.isSomethingChanged(events);
       this.events = events;
@@ -143,7 +141,7 @@ class GoogleCalendarCard extends HTMLElement {
       `;
 
       let events = eventList.events;
-      let groupedEventsPerDay = this.groupBy(events, event => moment(event.start.dateTime).format('YYYY-MM-DD'));
+      let groupedEventsPerDay = this.groupBy(events, event => moment(event.startDateTime).format('YYYY-MM-DD'));
 
       groupedEventsPerDay.forEach((events, day) => {
         let eventStateCardContentElement = document.createElement('div');
@@ -175,11 +173,11 @@ class GoogleCalendarCard extends HTMLElement {
       <div class="event-wrapper">
         <div class="event">
           <div class="info">
-            <div class="summary">${event.summary}</div>
-            ${event.location ? `<div class="location"><ha-icon icon="mdi:map-marker"></ha-icon>&nbsp;${event.location.split(',')[0]}</div>` : ''}
+            <div class="summary">${event.title}</div>
+            ${event.location ? `<div class="location"><ha-icon icon="mdi:map-marker"></ha-icon>&nbsp;${event.location}</div>` : ''}
             
           </div>
-          <div class="time">${event.start.date ? 'All day' : (moment(event.start.dateTime).format('HH:mm') + `-` + moment(event.end.dateTime).format('HH:mm'))}</div>
+          <div class="time">${event.isFullDayEvent ? 'All day' : (moment(event.startDateTime).format('HH:mm') + `-` + moment(event.endDateTime).format('HH:mm'))}</div>
         </div>
       </div>`;
   }
@@ -199,6 +197,13 @@ class GoogleCalendarCard extends HTMLElement {
   // distribute all cards over the available columns.
   getCardSize() {
     return 3;
+  }
+
+  toEvent(anEvent) {
+    if(anEvent.htmlLink) {
+      return new GoogleCalendarEvent(anEvent);
+    }
+    return new CalDavCalendarEvent(anEvent);
   }
 
   isSomethingChanged(events) {
@@ -225,4 +230,77 @@ class GoogleCalendarCard extends HTMLElement {
   }
 }
 
-customElements.define('google-calendar-card', GoogleCalendarCard);
+class GoogleCalendarEvent {
+  constructor(googleCalendarEvent) {
+    this.googleCalendarEvent = googleCalendarEvent;
+  }
+
+  get startDateTime() {
+    if (this.googleCalendarEvent.start.date) {
+      let dateTime = moment(this.googleCalendarEvent.start.date);
+      return dateTime.toISOString();
+    }
+    return this.googleCalendarEvent.start.dateTime;
+  }
+
+  get endDateTime() {
+    return this.googleCalendarEvent.end.dateTime;
+  }
+
+  get title() {
+    return this.googleCalendarEvent.summary;
+  }
+
+  get description() {
+    return this.googleCalendarEvent.description;
+  }
+
+  get location() {
+    if(this.googleCalendarEvent.location) {
+      return this.googleCalendarEvent.location.split(',')[0]
+    }
+    return undefined;
+  }
+
+  get isFullDayEvent() {
+    return this.googleCalendarEvent.start.date;
+  }
+}
+
+class CalDavCalendarEvent {
+  constructor(calDavCalendarEvent) {
+    this.calDavCalendarEvent = calDavCalendarEvent;
+  }
+
+  get startDateTime() {
+    return this.calDavCalendarEvent.start;
+  }
+
+  get endDateTime() {
+    return this.calDavCalendarEvent.end;
+  }
+
+  get title() {
+    return this.calDavCalendarEvent.title;
+  }
+
+  get description() {
+    return this.calDavCalendarEvent.description;
+  }
+
+  get location() {
+    if(this.calDavCalendarEvent.location) {
+      return this.calDavCalendarEvent.location;
+    }
+    return undefined;
+  }
+
+  get isFullDayEvent() {
+    let start = moment(this.startDateTime);
+    let end = moment(this.endDateTime);
+    let diffInHours = end.diff(start, 'hours');
+    return diffInHours >= 24;
+  }
+}
+
+customElements.define('calendar-card', CalendarCard);
