@@ -1,6 +1,3 @@
-import moment from 'moment';
-import 'moment/min/locales';
-
 class GoogleCalendarCard extends HTMLElement {
   set hass(hass) {
     if (!this.content) {
@@ -66,7 +63,6 @@ class GoogleCalendarCard extends HTMLElement {
   updateHtmlIfNecessary(eventList) {
     if(eventList.isSomethingChanged) {
       this.content.innerHTML = `
-      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
         <style>
           .day-wrapper {
             border-bottom: 1px solid rgba(0,0,0,.12);
@@ -119,7 +115,7 @@ class GoogleCalendarCard extends HTMLElement {
 
           .time {
             font-size: smaller;
-            color: rgba(0,0,0,.62);
+            color: rgba(var(--primary-color),.62);
           }
 
           .now {
@@ -131,7 +127,18 @@ class GoogleCalendarCard extends HTMLElement {
             border-color: var(--primary-color);
             border-width: 1px 0 0 0;
             margin-top: -9px;
+            margin-left: 5px;
           }
+
+          ha-icon {
+            color: var(--state-icon-color);
+          }
+
+          ha-icon.now {
+            height: 16px;
+            width: 16px;
+          }
+
         </style>
       `;
 
@@ -161,7 +168,7 @@ class GoogleCalendarCard extends HTMLElement {
 
   getEventHtml(event) {
     if(event.type) {
-        return `<i class="fas fa-circle fa-sm now"></i><hr class="now" />`;
+        return `<ha-icon icon="mdi:circle" class="now"></ha-icon><hr class="now" />`;
     }
     //${event.summary.indexOf('birthday') > 0 ? `<div class="congrats"><i class="fas fa-gift"></i>&nbsp;Send congrats</div>` : ''}
     return `
@@ -169,7 +176,7 @@ class GoogleCalendarCard extends HTMLElement {
         <div class="event">
           <div class="info">
             <div class="summary">${event.summary}</div>
-            ${event.location ? `<div class="location"><i class="fas fa-map-marker-alt"></i>&nbsp;${event.location.split(',')[0]}</div>` : ''}
+            ${event.location ? `<div class="location"><ha-icon icon="mdi:map-marker"></ha-icon>&nbsp;${event.location.split(',')[0]}</div>` : ''}
             
           </div>
           <div class="time">${event.start.date ? 'All day' : (moment(event.start.dateTime).format('HH:mm') + `-` + moment(event.end.dateTime).format('HH:mm'))}</div>
