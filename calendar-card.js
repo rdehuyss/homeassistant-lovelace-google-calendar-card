@@ -63,7 +63,7 @@ class CalendarCard extends HTMLElement {
       this.content.innerHTML = `
         <style>
           .day-wrapper {
-            border-bottom: 1px solid rgba(0,0,0,.12);
+            border-bottom: 1px solid;
             margin-bottom: 10px;
           }
 
