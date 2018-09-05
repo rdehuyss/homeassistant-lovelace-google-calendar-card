@@ -37,7 +37,7 @@ class CalendarCard extends HTMLElement {
       }
 
       events.sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime));
-
+      
       let isSomethingChanged = this.isSomethingChanged(events);
       this.events = events;
       this.lastUpdate = moment();
@@ -170,12 +170,12 @@ class CalendarCard extends HTMLElement {
     }
     //${event.summary.indexOf('birthday') > 0 ? `<div class="congrats"><i class="fas fa-gift"></i>&nbsp;Send congrats</div>` : ''}
     return `
-      <div class="event-wrapper">
-        <div class="event">
+      <div class="event-wrapper" style="border:2px solid ${event.color}">
+        <div class="event" >
           <div class="info">
             <div class="summary">${event.title}</div>
             ${event.location ? `<div class="location"><ha-icon icon="mdi:map-marker"></ha-icon>&nbsp;${event.location}</div>` : ''}
-
+            
           </div>
           <div class="time">${event.isFullDayEvent ? 'All day' : (moment(event.startDateTime).format('HH:mm') + `-` + moment(event.endDateTime).format('HH:mm'))}</div>
         </div>
@@ -231,9 +231,45 @@ class CalendarCard extends HTMLElement {
 }
 
 class GoogleCalendarEvent {
+  
   constructor(googleCalendarEvent) {
     this.googleCalendarEvent = googleCalendarEvent;
+    
   }
+
+  get color(){
+
+    if (this._color != null) {
+      return this._color;
+    }
+
+    let str = this.googleCalendarEvent.organizer.displayName;
+
+    let rangeInt = (val, min, max) => {
+      return Math.floor(val * (max - min + 1)) + min;
+    };  
+  
+    
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    let vals = [0,0,0]
+
+    for (let i = 0; i < 3; i++) {
+      vals[i] = parseInt( (hash >> (i * 8)) & 0xFF , 16) / 1000;
+    }
+
+    let h = rangeInt(vals[0], 0, 360);
+    let s = rangeInt(vals[1], 42, 98);
+    let l = rangeInt(vals[2], 40, 90);
+    this._color = `hsl(${h},${s}%,${l}%)`;
+
+    return this._color;
+   
+  }
+
 
   get startDateTime() {
     if (this.googleCalendarEvent.start.date) {
@@ -272,6 +308,10 @@ class CalDavCalendarEvent {
     this.calDavCalendarEvent = calDavCalendarEvent;
   }
 
+  get color() {
+    return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+  }
+
   get startDateTime() {
     return this.calDavCalendarEvent.start;
   }
@@ -302,5 +342,8 @@ class CalDavCalendarEvent {
     return diffInHours >= 24;
   }
 }
+
+
+
 
 customElements.define('calendar-card', CalendarCard);
