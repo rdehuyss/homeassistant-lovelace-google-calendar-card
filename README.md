@@ -28,7 +28,7 @@ In your ui-lovelace.yaml
 resources:
   - url: https://unpkg.com/moment@2.22.2/moment.js
     type: js
-  - url: /local/custom_ui/calendar-card/calendar-card.js?v=1.0.0
+  - url: /local/custom_ui/calendar-card/calendar-card.js?v=1.0.1
     type: module
 ...
 
