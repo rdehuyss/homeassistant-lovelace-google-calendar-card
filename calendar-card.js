@@ -174,8 +174,8 @@ class CalendarCard extends HTMLElement {
         <div class="event">
           <div class="info">
             <div class="summary">${event.title}</div>
-            ${event.location ? `<div class="location"><ha-icon icon="mdi:map-marker"></ha-icon>&nbsp;${event.location}</div>` : ''}
-
+            ${event.location ? `<div class="location"><ha-icon icon="mdi:map-marker"></ha-icon>&nbsp;
+            ${event.locationAddress ? `<a href="https://www.google.com/maps/place/${event.locationAddress}" target="_blank">${event.location}</a></div>` : `${event.location}</div>`}` : ''}
           </div>
           <div class="time">${event.isFullDayEvent ? 'All day' : (moment(event.startDateTime).format('HH:mm') + `-` + moment(event.endDateTime).format('HH:mm'))}</div>
         </div>
@@ -262,6 +262,14 @@ class GoogleCalendarEvent {
     return undefined;
   }
 
+  get locationAddress() {
+    if(this.googleCalendarEvent.location) {
+      let address = this.googleCalendarEvent.location.substring(this.googleCalendarEvent.location.indexOf(',') + 1);
+      return address.split(' ').join('+');
+    }
+    return undefined;
+  }
+
   get isFullDayEvent() {
     return this.googleCalendarEvent.start.date;
   }
@@ -292,6 +300,10 @@ class CalDavCalendarEvent {
     if(this.calDavCalendarEvent.location) {
       return this.calDavCalendarEvent.location;
     }
+    return undefined;
+  }
+
+  get locationAddress() {
     return undefined;
   }
 
