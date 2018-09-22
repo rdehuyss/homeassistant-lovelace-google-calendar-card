@@ -45,4 +45,9 @@ resources:
 ```
 
 ### You want more than 5 Google events?
-Using docker-compose and sed change the `'maxResults': 5` in `/homeassistant/components/calendar/google.py` to a number of your liking.
+```
+mkdir /config/custom_components/calendar
+cd /config/custom_components/calendar
+wget https://raw.githubusercontent.com/home-assistant/home-assistant/dev/homeassistant/components/calendar/google.py
+```
+Use a text editor to change the `'maxResults': 5` in `google.py` to a number of your liking.
