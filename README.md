@@ -21,6 +21,15 @@ custom_updater:
 ### Prerequisites
 You should have setup Google calendar integration or Caldav integration in HomeAssistant.
 
+## Options
+
+| Name | Type | Requirement | Description
+| ---- | ---- | ------- | -----------
+| type | string | **Required** | `custom:calendar-card`
+| showProgressBar | boolean | **Optional** | `true` Option to show the progress bar
+| numberOfDays | number | **Optional** | `7` Number of days to display from calendars
+| entities | object | **Required** | List of calendars to display
+
 ### Configuration
 In your ui-lovelace.yaml
 
@@ -40,6 +49,7 @@ resources:
 - type: "custom:calendar-card"
       name: "Birthdays"
       showProgressBar: false
+      numberOfDays: 14
       entities:
         - calendar.contacts
 ```
