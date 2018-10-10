@@ -21,7 +21,7 @@ class CalendarCard extends HTMLElement {
   async getAllEvents(entities) {
     if(!this.lastUpdate || moment().diff(this.lastUpdate, 'minutes') > 15) {
       const start = moment().startOf('day').format("YYYY-MM-DDTHH:mm:ss");
-      const end = moment().startOf('day').add(7, 'days').format("YYYY-MM-DDTHH:mm:ss");
+      const end = moment().startOf('day').add(this.config.numberOfDays, 'days').format("YYYY-MM-DDTHH:mm:ss");
 
       let urls = entities.map(entity => `calendars/${entity}?start=${start}Z&end=${end}Z`);
       let allResults = await this.getAllUrls(urls)
@@ -189,6 +189,7 @@ class CalendarCard extends HTMLElement {
     this.config = {
       name: 'Calendar',
       showProgressBar: true,
+      numberOfDays: 7,
       ...config
     };
   }
