@@ -7,7 +7,7 @@
 * 2018-08-11: First release
 
 ### Track Updates
-This custom card can be tracked with the help of [custom-lovelace](https://github.com/ciotlosm/custom-lovelace).
+This custom card can be tracked with the help of [custom-updater](https://github.com/custom-components/custom_updater).
 
 In your configuration.yaml
 
