@@ -117,7 +117,10 @@ class CalendarCard extends HTMLElement {
           }
 
           .now {
-            color: var(--paper-item-icon-color, #44739e);
+			color: #f9c536;
+		  }
+          .summarygrey {
+            color: var(--primary-color);
           }
 
           hr.now {
@@ -153,7 +156,7 @@ class CalendarCard extends HTMLElement {
   }
 
   getDayHtml(day, events) {
-    let clazz = moment().format('DD') === moment(day).format('DD') ? 'date now' : 'date';
+    let clazz = moment().format('MMDD') >= moment(day).format('MMDD') ? 'date now' : 'date';
     return `
       <div class="day">
         <div class="${clazz}">
@@ -169,11 +172,12 @@ class CalendarCard extends HTMLElement {
         return `<ha-icon icon="mdi:circle" class="now"></ha-icon><hr class="now" />`;
     }
     //${event.summary.indexOf('birthday') > 0 ? `<div class="congrats"><i class="fas fa-gift"></i>&nbsp;Send congrats</div>` : ''}
+    let clazz = moment().format('MMDDHHmm') > moment(event.endDateTime).format('MMDDHHmm') ? 'summarygrey' : 'summary';
     return `
       <div class="event-wrapper">
         <div class="event">
           <div class="info">
-            <div class="summary">${event.title}</div>
+            <div class="${clazz}">${event.title}</div>
             ${event.location ? `<div class="location"><ha-icon icon="mdi:map-marker"></ha-icon>&nbsp;
             ${event.locationAddress ? `<a href="https://www.google.com/maps/place/${event.locationAddress}" target="_blank">${event.location}</a></div>` : `${event.location}</div>`}` : ''}
           </div>
