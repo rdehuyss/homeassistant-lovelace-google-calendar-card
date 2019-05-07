@@ -117,7 +117,7 @@ class CalendarCard extends HTMLElement {
           }
 
           .now {
-			color: #f9c536;
+			color: var(--paper-item-icon-active-color);
 		  }
           .summarygrey {
             color: var(--primary-color);
