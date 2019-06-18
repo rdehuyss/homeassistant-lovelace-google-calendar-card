@@ -1,7 +1,13 @@
+# Deprecated
+This repo is deprecated. I'm sad to say that I do not have the time to maintain this. However, there are very good alternatives now available:
+- https://github.com/ljmerza/calendar-card
+- https://github.com/atomic7777/atomic_calendar
+
 # Calendar Card for Home Assistant
 ![](https://i.imgur.com/egQofZM.png "Layout")
 
 ## Updates
+* 2019-06-10: not long developped.
 * 2018-08-18: major rewrite, see updated installation instructions
 * 2018-08-14: Correct use of hass.callApi to support new Authentication System, multi-locale and theming support, added caching
 * 2018-08-11: First release
