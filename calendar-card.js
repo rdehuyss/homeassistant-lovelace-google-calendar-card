@@ -71,7 +71,7 @@ class CalendarCard extends HTMLElement {
             border-bottom: none;
           }
 
-          .day {
+          .google_calendar_day {
             display: flex;
             flex-direction: row;
             width: 100%;
@@ -155,7 +155,7 @@ class CalendarCard extends HTMLElement {
   getDayHtml(day, events) {
     let clazz = moment().format('DD') === moment(day).format('DD') ? 'date now' : 'date';
     return `
-      <div class="day">
+      <div class="google_calendar_day">
         <div class="${clazz}">
           <div>${moment(day).format('DD')}</div>
           <div>${moment(day).format('ddd')}</div>
